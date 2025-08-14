@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  hbbs:
+    image: rustdesk/rustdesk-server:latest
+    container_name: hbbs
+    ports:
+      - "21115:21115"
+      - "21116:21116"
+      - "21116:21116/udp"
+    command: hbbs -r rustdesk-server-production.up.railway.app:21117 -k _
+    volumes:
+      - hbbs_data:/root
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+    networks:
+      - rustdesk-net
+
+  hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: hbbr
+    ports:
+      - "21117:21117"
+    command: hbbr -k _
+    volumes:
+      - hbbr_data:/root
+    restart: unless-stopped
+    networks:
+      - rustdesk-net
+
+volumes:
+  hbbs_data:
+  hbbr_data:
+
+networks:
+  rustdesk-net:
+    driver: bridge
